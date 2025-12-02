@@ -10,10 +10,37 @@ st.set_page_config(
     layout="centered"
 )
 
+# --- PAGE HEADER ---
 st.title("🎓 Agent Exam Cram")
-st.caption("Instruction : Type 'Exit' to get your final report card.")
+
+# Use columns to align the author info nicely with the title or just style it better
+st.markdown(
+    """
+    <style>
+    .subtitle {
+        font-size: 1.2rem;
+        color: #6c757d;
+        margin-bottom: 0px;
+    }
+    .instruction {
+        background-color: #f0f2f6;
+        padding: 10px;
+        border-radius: 5px;
+        border-left: 5px solid #ff4b4b;
+        font-size: 0.9rem;
+    }
+    </style>
+    <p class="subtitle">By <b>Shanuka Gallage</b> | University of Kelaniya</p>
+    """, 
+    unsafe_allow_html=True
+)
+
 st.markdown("---")
-st.caption("Shanuka Gallage - University of Kelaniya")
+
+# A cleaner instruction box using Streamlit's native info component
+st.info("💡 **Pro Tip:** When you are done studying, type **'Exit'** or **'Quit'** to generate your Final Report Card!")
+
+
 
 # --- SIDEBAR & API KEY ---
 with st.sidebar:
@@ -126,5 +153,6 @@ if prompt := st.chat_input("Type your answer here..."):
                 except Exception as e:
 
                     st.error(f"Error: {e}")
+
 
 
