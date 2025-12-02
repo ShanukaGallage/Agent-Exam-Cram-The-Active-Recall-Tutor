@@ -11,7 +11,9 @@ st.set_page_config(
 )
 
 st.title("🎓 Agent Exam Cram")
-st.caption("Your helpful AI University Tutor")
+st.caption("Instruction : Type 'Exit' to get your final report card.")
+st.markdown("---")
+st.caption("Shanuka Gallage - University of Kelaniya")
 
 # --- SIDEBAR & API KEY ---
 with st.sidebar:
@@ -124,4 +126,5 @@ if prompt := st.chat_input("Type your answer here..."):
                 except Exception as e:
 
                     st.error(f"Error: {e}")
+
 
