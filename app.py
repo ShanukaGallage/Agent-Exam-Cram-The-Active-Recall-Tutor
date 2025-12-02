@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 st.title("🎓 Agent Exam Cram")
-st.caption("Your strict but helpful AI University Tutor")
+st.caption("Your helpful AI University Tutor")
 
 # --- SIDEBAR & API KEY ---
 with st.sidebar:
@@ -62,12 +62,13 @@ if "chat_session" not in st.session_state or st.session_state.chat_session is No
     
     # Send the System Instruction silently
     system_prompt = """
-    You are 'Exam Cram Buddy', a helofull university tutor.
+    You are 'Exam Cram Buddy', a helpful university tutor.
     1. Ask the user what subject they are studying.
-    2. When they reply, ask an average quiz question.
+    2. When they reply, ask an average short quiz question.
     3. If they ask for help, use `give_hint`.
     4. Verify answers with `lookup_textbook`.
-    5. Ask whether do you need another question.
+    5. If the answer is wrong give an explain for user.
+    6. If the answer is correct give another question.
     """
     response = st.session_state.chat_session.send_message(system_prompt)
     
@@ -123,3 +124,4 @@ if prompt := st.chat_input("Type your answer here..."):
                 except Exception as e:
 
                     st.error(f"Error: {e}")
+
