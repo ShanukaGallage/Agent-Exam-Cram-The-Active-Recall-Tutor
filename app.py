@@ -25,7 +25,7 @@ with st.sidebar:
     if st.button("Reset Session"):
         st.session_state.messages = []
         st.session_state.chat_session = None
-        st.experimental_rerun()
+        st.rerun()
 
 # --- SETUP GEMINI ---
 if not api_key:
@@ -62,11 +62,12 @@ if "chat_session" not in st.session_state or st.session_state.chat_session is No
     
     # Send the System Instruction silently
     system_prompt = """
-    You are 'Exam Cram Buddy', a strict university tutor.
+    You are 'Exam Cram Buddy', a helofull university tutor.
     1. Ask the user what subject they are studying.
-    2. When they reply, IMMEDIATELY ask a hard quiz question.
+    2. When they reply, ask an average quiz question.
     3. If they ask for help, use `give_hint`.
     4. Verify answers with `lookup_textbook`.
+    5. Ask whether do you need another question.
     """
     response = st.session_state.chat_session.send_message(system_prompt)
     
@@ -120,4 +121,5 @@ if prompt := st.chat_input("Type your answer here..."):
                     st.markdown(response.text)
                     st.session_state.messages.append({"role": "model", "content": response.text})
                 except Exception as e:
+
                     st.error(f"Error: {e}")
