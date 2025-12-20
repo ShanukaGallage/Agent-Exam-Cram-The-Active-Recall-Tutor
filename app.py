@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 import os
 import time
+from google.api_core.exceptions import ResourceExhausted
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -39,8 +40,6 @@ st.markdown("---")
 
 # A cleaner instruction box using Streamlit's native info component
 st.info("💡 **Pro Tip:** When you are done studying, type **'Exit'** or **'Quit'** to generate your Final Report Card!")
-
-
 
 # --- SIDEBAR & API KEY ---
 with st.sidebar:
@@ -120,27 +119,33 @@ if prompt := st.chat_input("Type your answer here..."):
     if prompt.lower() in ["exit", "quit", "finish"]:
         with st.chat_message("assistant"):
             with st.spinner("Generating Report Card..."):
-                # Initialize Evaluator Agent
-                grader_model = genai.GenerativeModel('gemini-2.5-flash')
-                
-                # Create Transcript
-                transcript = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
-                
-                grader_prompt = f"""
-                You are the Exam Board Evaluator. Analyze this study session.
-                1. Subject studied.
-                2. Correct/Incorrect answers.
-                3. Final Grade (A-F).
-                
-                TRANSCRIPT:
-                {transcript}
-                """
-                report_card = grader_model.generate_content(grader_prompt).text
-                st.markdown("### 🎓 Final Report Card")
-                st.markdown(report_card)
-                
-                # Append to history so it stays on screen
-                st.session_state.messages.append({"role": "model", "content": report_card})
+                try:
+                    # Initialize Evaluator Agent
+                    grader_model = genai.GenerativeModel('gemini-2.5-flash')
+                    
+                    # Create Transcript
+                    transcript = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
+                    
+                    grader_prompt = f"""
+                    You are the Exam Board Evaluator. Analyze this study session.
+                    1. Subject studied.
+                    2. Correct/Incorrect answers.
+                    3. Final Grade (A-F).
+                    
+                    TRANSCRIPT:
+                    {transcript}
+                    """
+                    report_card = grader_model.generate_content(grader_prompt).text
+                    st.markdown("### 🎓 Final Report Card")
+                    st.markdown(report_card)
+                    
+                    # Append to history so it stays on screen
+                    st.session_state.messages.append({"role": "model", "content": report_card})
+
+                except ResourceExhausted:
+                    st.warning("⏳ The Evaluator Agent is busy (Quota Limit). Please wait 1 minute and type 'Exit' again.")
+                except Exception as e:
+                    st.error(f"Error: {e}")
                 
     else:
         # 3. Standard Tutor Response
@@ -150,9 +155,9 @@ if prompt := st.chat_input("Type your answer here..."):
                     response = st.session_state.chat_session.send_message(prompt)
                     st.markdown(response.text)
                     st.session_state.messages.append({"role": "model", "content": response.text})
+                
+                except ResourceExhausted:
+                    st.warning("⏳ The Tutor is busy! We hit the Google Free Tier limit. Please wait 1 minute and try again.")
+                
                 except Exception as e:
-
                     st.error(f"Error: {e}")
-
-
-
