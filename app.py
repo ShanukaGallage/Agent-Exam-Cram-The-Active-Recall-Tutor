@@ -157,7 +157,8 @@ if prompt := st.chat_input("Type your answer here..."):
                     st.session_state.messages.append({"role": "model", "content": response.text})
                 
                 except ResourceExhausted:
-                    st.warning("⏳ The Tutor is busy! We hit the Google Free Tier limit. Please wait 1 minute and try again.")
+                    st.warning("⏳ The Tutor is busy! Please wait 1 minute and try again.")
                 
                 except Exception as e:
                     st.error(f"Error: {e}")
+
